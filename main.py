@@ -1,7 +1,8 @@
 import streamlit as st
 import sqlite3
 import bcrypt
-import os
+import app
+import admin
 
 DB = "database.db"
 
@@ -28,12 +29,10 @@ if st.button("Ingresar"):
 
             if rol == "admin":
                 st.success("Bienvenido, administrador.")
-                with open("admin.py", "r", encoding="utf-8") as f:
-                    exec(f.read(), globals())
+                admin.run()
             else:
                 st.success("Bienvenido al test.")
-                with open("app.py", "r", encoding="utf-8") as f:
-                    exec(f.read(), globals())
+                app.run()
         else:
             st.error("Contraseña incorrecta.")
     else:

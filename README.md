@@ -1,81 +1,69 @@
-# 📊 Test de Evaluación para Ingenieros de Datos
 
-Este proyecto es una aplicación construida en Streamlit para evaluar conocimientos clave de un ingeniero de datos en cinco bloques temáticos:
+# 🧪 Test en Línea para Ingenieros de Datos
+
+Esta aplicación permite realizar una evaluación técnica para ingenieros de datos, estructurada en 5 bloques temáticos:
 
 1. **Fuentes de Datos**
 2. **Capa de Ingesta**
-3. **Procesamiento**
+3. **Capa de Procesamiento**
 4. **SQL**
 5. **Python**
 
----
-
-## 🧠 Características
-
-- Autenticación de usuarios (SQLite)
-- Registro de cambios de pestaña durante el test
-- Puntaje por bloque y cálculo ponderado (20% cada bloque)
-- Detección de reintentos
-- Panel administrador para visualizar resultados y registrar nuevos usuarios
+Incluye autenticación con roles, cronómetro, registro de cambios de pestaña, y módulo administrador para visualizar resultados y registrar nuevos usuarios.
 
 ---
 
-## 📦 Estructura del Repositorio
+## 🚀 Despliegue en Streamlit Cloud
 
-```
-.
-├── app.py               # Módulo de test del usuario
-├── admin.py             # Módulo de administración
-├── database.db          # Base de datos SQLite
-├── requirements.txt     # Dependencias necesarias
-├── schema.sql           # Script de creación de tablas
-├── README.md            # Este archivo
-```
+Haz clic en el siguiente botón para desplegar la app en Streamlit Cloud:
+
+[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://share.streamlit.io/)
+
+> ⚠️ Asegúrate de subir todos los archivos de este repositorio, incluyendo `database.db`.
 
 ---
 
-## 🚀 Despliegue Rápido en Streamlit Cloud
+## 🛠️ Requisitos
 
-Puedes lanzar esta aplicación en la nube con un clic:
-
-### 🎯 App de Usuario
-
-[![Abrir en Streamlit Cloud](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://streamlit.io/)
-
-### 🛠️ App de Admin
-
-Cambia el archivo principal a `admin.py` al crear una segunda app.
-
----
-
-## 🔐 Usuarios Iniciales
-
-| Usuario         | Contraseña  | Rol     |
-|----------------|-------------|---------|
-| admin           | admin123    | admin   |
-| ricardo.polo    | ricardo123  | usuario |
-| osvaldo.esparza | osvaldo123  | usuario |
-
----
-
-## 🛠️ Tecnologías Utilizadas
-
+- Python 3.8+
 - Streamlit
-- SQLite3
-- Pandas
-- HTML + JS para detección de pestañas
+- bcrypt
+- pandas
+- sqlite3
 
----
-
-## 📥 Instalación local
+Instala dependencias con:
 
 ```bash
 pip install -r requirements.txt
-streamlit run app.py
 ```
 
-Para ingresar como admin:
+---
 
-```bash
-streamlit run admin.py
-```
+## 🧑‍💻 Usuarios Iniciales
+
+| Nombre     | Usuario         | Contraseña  | Rol     |
+|------------|------------------|-------------|---------|
+| Admin      | `admin`          | `admin123`  | admin   |
+| Ricardo    | `ricardo.polo`   | `ricardo123`| usuario |
+| Osvaldo    | `osvaldo.esparza`| `osvaldo123`| usuario |
+
+---
+
+## 📁 Archivos clave
+
+- `main.py`: Login y redirección por rol
+- `app.py`: Evaluación para usuarios
+- `admin.py`: Panel de control para administrador
+- `database.db`: Base de datos con usuarios, preguntas y resultados
+
+---
+
+## 🔒 Seguridad
+
+Las contraseñas están hasheadas usando `bcrypt`.
+
+---
+
+## 📌 Autor
+
+Desarrollado para pruebas técnicas de ingeniería de datos.

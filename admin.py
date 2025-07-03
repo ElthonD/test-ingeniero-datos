@@ -5,12 +5,9 @@ from datetime import datetime
 
 DB = "database.db"
 
-st.title("📊 Panel de Administración")
+def run():
+    st.title("📊 Panel de Administración")
 
-usuario = st.text_input("Usuario")
-password = st.text_input("Contraseña", type="password")
-
-if usuario == "admin" and password == "admin123":
     conn = sqlite3.connect(DB)
 
     st.subheader("📄 Resultados de Evaluaciones")
@@ -35,13 +32,13 @@ if usuario == "admin" and password == "admin123":
     nuevo_usuario = st.text_input("Usuario nuevo")
     nueva_pass = st.text_input("Contraseña nueva", type="password")
     if st.button("Registrar"):
+        import bcrypt
+        hashed = bcrypt.hashpw(nueva_pass.encode(), bcrypt.gensalt()).decode()
         try:
             conn.execute("INSERT INTO usuarios (nombre, apellido, usuario, contraseña, rol) VALUES (?, ?, ?, ?, 'usuario')",
-                         (nombre, apellido, nuevo_usuario, nueva_pass))
+                         (nombre, apellido, nuevo_usuario, hashed))
             conn.commit()
             st.success("Usuario registrado correctamente.")
         except:
             st.error("Error: usuario ya existe.")
     conn.close()
-else:
-    st.error("Acceso restringido.")
