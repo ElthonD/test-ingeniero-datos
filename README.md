@@ -43,9 +43,9 @@ pip install -r requirements.txt
 
 | Nombre     | Usuario         | Contraseña  | Rol     |
 |------------|------------------|-------------|---------|
-| Admin      | `admin`          | `admin123`  | admin   |
-| Ricardo    | `ricardo.polo`   | `ricardo123`| usuario |
-| Osvaldo    | `osvaldo.esparza`| `osvaldo123`| usuario |
+| Admin      | `admin`          | `Admin!2024#Secure`  | admin   |
+| Ricardo    | `ricardo.polo`   | `Ricardo_2024$Test`| usuario |
+| Osvaldo    | `osvaldo.esparza`| `Osvaldo@2024#Safe`| usuario |
 
 ---
 
