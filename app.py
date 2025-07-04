@@ -136,7 +136,7 @@ Haz clic en 'Iniciar Test' para comenzar.
             registrar_resultados(usuario, bloque, resultado, cambios_tabs, reintento)
             st.success(f"✅ Puntaje bloque {bloque}: {resultado}/100 (reintento #{reintento + 1})")
 
-    st.markdown(f"### 🎯 Resultado final estimado: {int(total_final)} / 100")
+    # El resultado final estimado ya no se muestra al usuario, solo se registra en la base de datos y se visualiza en el módulo admin
 
 
     
