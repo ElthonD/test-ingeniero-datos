@@ -74,4 +74,17 @@ def run():
         st.success("👋 Has cerrado sesión exitosamente.")
         st.experimental_rerun()
 
+
+    st.subheader("🔁 Reiniciar Test de Usuario")
+    usuarios_lista = [row[0] for row in conn.execute("SELECT DISTINCT usuario FROM resultados").fetchall()]
+    if usuarios_lista:
+        usuario_seleccionado = st.selectbox("Selecciona un usuario para reiniciar test", usuarios_lista)
+        if st.button("Reiniciar test"):
+            conn.execute("DELETE FROM resultados WHERE usuario = ?", (usuario_seleccionado,))
+            conn.commit()
+            st.success(f"✅ Test de '{usuario_seleccionado}' reiniciado correctamente.")
+    else:
+        st.info("No hay usuarios con resultados aún.")
+
+
     conn.close()

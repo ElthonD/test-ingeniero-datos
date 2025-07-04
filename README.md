@@ -1,110 +1,59 @@
-# 🧪 Test en Línea para Ingenieros de Datos
 
-Esta aplicación permite realizar una evaluación técnica para ingenieros de datos, estructurada en 5 bloques temáticos:
+# 🧠 Test en Línea para Ingenieros de Datos
 
-1. **Fuentes de Datos**
-2. **Capa de Ingesta**
-3. **Capa de Procesamiento**
-4. **SQL**
-5. **Python**
-
-Incluye autenticación con roles, cronómetro, registro de cambios de pestaña, y módulo administrador para visualizar resultados y registrar nuevos usuarios.
+Esta aplicación en Streamlit permite evaluar habilidades clave en arquitectura de datos, fuentes, ingesta, procesamiento, almacenamiento (SQL) y Python.
 
 ---
 
-## 🚀 Despliegue en Streamlit Cloud
+## 🚀 Descripción General
 
-Haz clic en el siguiente botón para desplegar la app en Streamlit Cloud:
+La aplicación está dividida en dos módulos:
 
-[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://share.streamlit.io/)
-
-> ⚠️ Asegúrate de subir todos los archivos de este repositorio, incluyendo `database.db`.
+- **Módulo de Test:** Para usuarios registrados. Presentan un test dividido en 5 bloques con cronómetro (60 min).
+- **Módulo de Admin:** Visualiza resultados, reintentos, cambios de pestaña por bloque, y permite registrar nuevos usuarios.
 
 ---
 
-## 🛠️ Requisitos
+## 👥 Usuarios de Prueba
 
-- Python 3.8+
+| Nombre            | Usuario        | Contraseña             | Rol     |
+|-------------------|----------------|-------------------------|---------|
+| Ricardo Polo      | ricardo.polo   | R1c4rd0#2025!           | usuario |
+| Osvaldo Esparza   | osvaldo.esparza| 0sp4rzA#2025!           | usuario |
+| Daniel Rivas      | daniel.rivas   | S3gura#D4nR!v@s2025     | usuario |
+| Administrador     | admin          | Adm1n#2025!             | admin   |
+
+---
+
+## 🗂 Estructura del Proyecto
+
+- `main.py`: Lógica principal de login/redirección.
+- `app.py`: Test interactivo con bloques, cronómetro y seguimiento de pestañas.
+- `admin.py`: Panel de administración para ver resultados y gestionar usuarios.
+- `database.db`: Base de datos SQLite con usuarios, resultados, preguntas y reintentos.
+- `README.md`: Instrucciones del proyecto.
+
+---
+
+## 🧪 Evaluación
+
+- 5 bloques (Fuentes de datos, Ingesta, Procesamiento, SQL, Python)
+- 75 preguntas (15 por bloque, baja, media y alta dificultad)
+- Cronómetro: 60 minutos
+- Registro de reintentos y cambios de pestaña por bloque
+- Resultados ponderados por bloque (20% c/u)
+
+---
+
+## 🧰 Requisitos
+
+- Python 3.9+
 - Streamlit
-- bcrypt
-- pandas
-- sqlite3
-
-Instala dependencias con:
-
-```bash
-pip install -r requirements.txt
-```
+- Pandas, SQLite3, bcrypt
 
 ---
 
-## 🧑‍💻 Usuarios Iniciales
+## ☁️ Despliegue
 
-| Nombre     | Usuario           | Contraseña             | Rol     |
-|------------|-------------------|-------------------------|---------|
-| Admin      | `admin`           | `Admin!2024#Secure`     | admin   |
-| Ricardo    | `ricardo.polo`    | `Ricardo_2024$Test`     | usuario |
-| Osvaldo    | `osvaldo.esparza` | `Osvaldo@2024#Safe`     | usuario |
+Puedes desplegarlo fácilmente en [Streamlit Cloud](https://streamlit.io/cloud) o localmente.
 
----
-
-## 📁 Archivos clave
-
-- `main.py`: Login y redirección por rol
-- `app.py`: Evaluación para usuarios
-- `admin.py`: Panel de control para administrador
-- `database.db`: Base de datos con usuarios, preguntas y resultados
-- `requirements.txt`: Dependencias necesarias
-- `README.md`: Instrucciones del proyecto
-
----
-
-## 🔒 Seguridad
-
-Las contraseñas están hasheadas usando `bcrypt` y no se almacenan en texto plano.
-
----
-
-## 📌 Autor
-
-Desarrollado para pruebas técnicas de ingeniería de datos.
-
----
-
-## ❓ Preguntas Frecuentes (FAQ)
-
-### ¿Cómo agrego nuevas preguntas al test?
-
-Actualmente las preguntas están almacenadas en la tabla `preguntas` de `database.db`. Puedes agregarlas con cualquier visor SQLite o usando código Python como:
-
-```python
-import sqlite3
-
-conn = sqlite3.connect("database.db")
-conn.execute("INSERT INTO preguntas (bloque, nivel, pregunta, opcion_a, opcion_b, opcion_c, opcion_d, respuesta_correcta) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-             ("bloque_1", "media", "¿Qué es una API REST?", "Una base de datos", "Un modelo de datos", "Una interfaz de comunicación", "Un conector SQL", "c"))
-conn.commit()
-conn.close()
-```
-
-### ¿Cómo agrego más usuarios desde el administrador?
-
-Desde el panel admin, completa el formulario con:
-- Nombre
-- Apellido
-- Nombre de usuario único
-- Contraseña
-
-Se guardarán automáticamente en la base de datos.
-
-### ¿Cómo restablezco una contraseña?
-
-Debes acceder a la base de datos y actualizar el campo `contraseña` del usuario deseado con un nuevo hash usando `bcrypt`.
-
----
-
-¿Tienes más dudas o sugerencias? Crea un issue en tu repositorio o extiende esta guía.
-
-### 🧪 Usuario de prueba agregado
-- **Usuario:** `daniel.rivas`
-- **Contraseña:** `S3gura#D4nR!v@s2025`
