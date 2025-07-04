@@ -63,7 +63,8 @@ def run():
         st.success("👋 Has cerrado sesión exitosamente. ¡Gracias por usar la plataforma!")
         st.experimental_rerun()
 
-    conn.close()st.subheader("👥 Usuarios Registrados")
+    conn.close()
+    st.subheader("👥 Usuarios Registrados")
     usuarios_df = pd.read_sql_query("SELECT nombre, apellido, usuario, rol FROM usuarios", conn)
     st.dataframe(usuarios_df)
 
