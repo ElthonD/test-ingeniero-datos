@@ -25,7 +25,19 @@ cursor.execute('DELETE FROM preguntas')
 
 # Insertar preguntas
 for _, row in df.iterrows():
-    bloque = str(row['bloque'])
+    # Normalizar nombres de bloque para que coincidan con la app
+    bloque_original = str(row['bloque']).strip().lower()
+    bloque_map = {
+        'fuentes de datos': 'fuentes_datos',
+        'fuentes_datos': 'fuentes_datos',
+        'ingesta': 'ingesta',
+        'capa de ingesta': 'ingesta',
+        'procesamiento': 'procesamiento',
+        'capa de procesamiento': 'procesamiento',
+        'sql': 'sql',
+        'python': 'python'
+    }
+    bloque = bloque_map.get(bloque_original, bloque_original.replace(' ', '_'))
     complejidad = str(row['complejidad'])
     pregunta = str(row['pregunta'])
     # Suponiendo que las opciones están en columnas separadas: opcion_a, opcion_b, opcion_c, opcion_d
