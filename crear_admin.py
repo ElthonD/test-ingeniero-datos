@@ -12,6 +12,7 @@ conn = sqlite3.connect(DB)
 cursor = conn.cursor()
 hashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
 try:
+    cursor.execute("DELETE FROM usuarios WHERE usuario = ?", (usuario,))
     cursor.execute("INSERT INTO usuarios (nombre, apellido, usuario, contraseña, rol) VALUES (?, ?, ?, ?, ?)",
                    (nombre, apellido, usuario, hashed, rol))
     conn.commit()
