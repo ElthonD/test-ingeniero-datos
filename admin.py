@@ -13,23 +13,27 @@ def run():
 
     st.title("📊 Panel de Administración")
 
+    # Conexión abierta durante toda la ejecución
     conn = sqlite3.connect(DB)
 
     st.subheader("📄 Resultados de Evaluaciones")
-    resultados = pd.read_sql_query("SELECT * FROM resultados", conn)
-    if not resultados.empty:
-        df_pivot = resultados.pivot_table(index='usuario', columns='bloque', values='resultado', aggfunc='max').fillna(0)
-        cambios = resultados.pivot_table(index='usuario', columns='bloque', values='cambios_tabs', aggfunc='max').fillna(0)
-        reintentos = resultados.groupby('usuario')['reintento'].max()
-        final = df_pivot.sum(axis=1) * 0.20
-        df_pivot.columns = [f"Resultado {c}" for c in df_pivot.columns]
-        cambios.columns = [f"Cambios pestaña {c}" for c in cambios.columns]
-        resumen = pd.concat([df_pivot, cambios], axis=1)
-        resumen["Reintentos"] = reintentos
-        resumen["Resultado Final"] = final.astype(int)
-        st.dataframe(resumen)
-    else:
-        st.info("Aún no hay resultados.")
+    try:
+        resultados = pd.read_sql_query("SELECT * FROM resultados", conn)
+        if not resultados.empty:
+            df_pivot = resultados.pivot_table(index='usuario', columns='bloque', values='resultado', aggfunc='max').fillna(0)
+            cambios = resultados.pivot_table(index='usuario', columns='bloque', values='cambios_tabs', aggfunc='max').fillna(0)
+            reintentos = resultados.groupby('usuario')['reintento'].max()
+            final = df_pivot.sum(axis=1) * 0.20
+            df_pivot.columns = [f"Resultado {c}" for c in df_pivot.columns]
+            cambios.columns = [f"Cambios pestaña {c}" for c in cambios.columns]
+            resumen = pd.concat([df_pivot, cambios], axis=1)
+            resumen["Reintentos"] = reintentos
+            resumen["Resultado Final"] = final.astype(int)
+            st.dataframe(resumen)
+        else:
+            st.info("Aún no hay resultados.")
+    except Exception as e:
+        st.error(f"Error al cargar resultados: {e}")
 
     st.subheader("➕ Registrar nuevo usuario")
     with st.form("registro_usuario", clear_on_submit=True):
@@ -58,14 +62,16 @@ def run():
                     except Exception as e:
                         st.error(f"⚠️ Error inesperado: {e}")
 
+    st.subheader("👥 Usuarios Registrados")
+    try:
+        usuarios_df = pd.read_sql_query("SELECT nombre, apellido, usuario, rol FROM usuarios", conn)
+        st.dataframe(usuarios_df)
+    except Exception as e:
+        st.error(f"Error al mostrar usuarios: {e}")
+
     if st.button("Cerrar sesión 🔒"):
         st.session_state.clear()
-        st.success("👋 Has cerrado sesión exitosamente. ¡Gracias por usar la plataforma!")
+        st.success("👋 Has cerrado sesión exitosamente.")
         st.experimental_rerun()
-
-    conn.close()
-    st.subheader("👥 Usuarios Registrados")
-    usuarios_df = pd.read_sql_query("SELECT nombre, apellido, usuario, rol FROM usuarios", conn)
-    st.dataframe(usuarios_df)
 
     conn.close()
