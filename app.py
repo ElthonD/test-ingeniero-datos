@@ -140,8 +140,10 @@ Haz clic en 'Iniciar Test' para comenzar.
             registrar_resultados(usuario, bloque, resultado, cambios_tabs_total, reintento)
         st.success("¡Test finalizado! Tus respuestas han sido registradas. Muchas gracias por participar.")
         st.balloons()
-        st.session_state.clear()
-        st.stop()
+        # Cerrar sesión correctamente
+        for key in list(st.session_state.keys()):
+            del st.session_state[key]
+        st.rerun()
 
     # El resultado final estimado ya no se muestra al usuario, solo se registra en la base de datos y se visualiza en el módulo admin
 
