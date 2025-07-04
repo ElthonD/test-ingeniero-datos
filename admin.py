@@ -1,11 +1,16 @@
 import streamlit as st
 import pandas as pd
 import sqlite3
+import bcrypt
 from datetime import datetime
 
 DB = "database.db"
 
 def run():
+    if "usuario" not in st.session_state or st.session_state.get("rol") != "admin":
+        st.error("🔐 Acceso restringido. Por favor inicia sesión como administrador.")
+        st.stop()
+
     st.title("📊 Panel de Administración")
 
     conn = sqlite3.connect(DB)
@@ -27,18 +32,32 @@ def run():
         st.info("Aún no hay resultados.")
 
     st.subheader("➕ Registrar nuevo usuario")
-    nombre = st.text_input("Nombre")
-    apellido = st.text_input("Apellido")
-    nuevo_usuario = st.text_input("Usuario nuevo")
-    nueva_pass = st.text_input("Contraseña nueva", type="password")
-    if st.button("Registrar"):
-        import bcrypt
-        hashed = bcrypt.hashpw(nueva_pass.encode(), bcrypt.gensalt()).decode()
-        try:
-            conn.execute("INSERT INTO usuarios (nombre, apellido, usuario, contraseña, rol) VALUES (?, ?, ?, ?, 'usuario')",
-                         (nombre, apellido, nuevo_usuario, hashed))
-            conn.commit()
-            st.success("Usuario registrado correctamente.")
-        except:
-            st.error("Error: usuario ya existe.")
+    with st.form("registro_usuario"):
+        nombre = st.text_input("Nombre")
+        apellido = st.text_input("Apellido")
+        nuevo_usuario = st.text_input("Usuario nuevo")
+        nueva_pass = st.text_input("Contraseña nueva", type="password")
+        submitted = st.form_submit_button("Registrar")
+        if submitted:
+            if not (nombre and apellido and nuevo_usuario and nueva_pass):
+                st.warning("Todos los campos son obligatorios.")
+            else:
+                hashed = bcrypt.hashpw(nueva_pass.encode(), bcrypt.gensalt()).decode()
+                try:
+                    conn.execute("INSERT INTO usuarios (nombre, apellido, usuario, contraseña, rol) VALUES (?, ?, ?, ?, 'usuario')",
+                                (nombre, apellido, nuevo_usuario, hashed))
+                    conn.commit()
+                    st.success("Usuario registrado correctamente.")
+                except:
+                    st.error("Error: el usuario ya existe.")
+
     conn.close()
+
+
+    
+
+
+    if st.button("Cerrar sesión 🔒"):
+        st.session_state.clear()
+        st.success("👋 Has cerrado sesión exitosamente. ¡Gracias por usar la plataforma!")
+        st.experimental_rerun()

@@ -90,3 +90,12 @@ Haz clic en 'Iniciar Test' para comenzar.
             st.success(f"✅ Puntaje bloque {bloque}: {resultado}/100 (reintento #{reintento + 1})")
 
     st.markdown(f"### 🎯 Resultado final estimado: {int(total_final)} / 100")
+
+
+    
+
+
+    if st.button("Cerrar sesión 🔒"):
+        st.session_state.clear()
+        st.success("👋 Has cerrado sesión exitosamente. ¡Gracias por usar la plataforma!")
+        st.experimental_rerun()
