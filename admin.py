@@ -39,6 +39,7 @@ def run():
         nueva_pass = st.text_input("Contraseña nueva", type="password")
         submitted = st.form_submit_button("Registrar")
         if submitted:
+            st.write("Intentando registrar usuario...")
             if not (nombre and apellido and nuevo_usuario and nueva_pass):
                 st.warning("Todos los campos son obligatorios.")
             else:
@@ -50,6 +51,10 @@ def run():
                     st.success("✅ Usuario Registrado")
                 except Exception as e:
                     st.error(f"Error al registrar usuario: {e}")
+            # Mostrar usuarios actuales tras cada intento de registro
+            usuarios_df = pd.read_sql_query("SELECT id, nombre, apellido, usuario, rol FROM usuarios", conn)
+            st.write("Usuarios actuales en la base de datos:")
+            st.dataframe(usuarios_df)
 
     conn.close()
 
