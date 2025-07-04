@@ -41,12 +41,11 @@ pip install -r requirements.txt
 
 ## 🧑‍💻 Usuarios Iniciales
 
-| Nombre     | Usuario         | Contraseña          | Rol     |
-|------------|------------------|--------------------|---------|
-| Admin      | `admin`          | `Admin!2024#Secure`| admin   |
-| Ricardo    | `ricardo.polo`   | `Ricardo_2024$Test`| usuario |
-| Osvaldo    | `osvaldo.esparza`| `Osvaldo@2024#Safe`| usuario |
-| Elthon     | `erivas`         | `Qan40646`         | usuario |
+| Nombre     | Usuario         | Contraseña  | Rol     |
+|------------|------------------|-------------|---------|
+| Admin      | `admin`          | `admin123`  | admin   |
+| Ricardo    | `ricardo.polo`   | `ricardo123`| usuario |
+| Osvaldo    | `osvaldo.esparza`| `osvaldo123`| usuario |
 
 ---
 

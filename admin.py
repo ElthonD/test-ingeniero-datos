@@ -47,7 +47,7 @@ def run():
                     conn.execute("INSERT INTO usuarios (nombre, apellido, usuario, contraseña, rol) VALUES (?, ?, ?, ?, 'usuario')",
                                 (nombre, apellido, nuevo_usuario, hashed))
                     conn.commit()
-                    st.success("Usuario registrado correctamente.")
+                    st.success("✅ Usuario Registrado")
                 except:
                     st.error("Error: el usuario ya existe.")
 
