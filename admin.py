@@ -32,37 +32,39 @@ def run():
         st.info("Aún no hay resultados.")
 
     st.subheader("➕ Registrar nuevo usuario")
-    with st.form("registro_usuario"):
+    with st.form("registro_usuario", clear_on_submit=True):
         nombre = st.text_input("Nombre")
         apellido = st.text_input("Apellido")
         nuevo_usuario = st.text_input("Usuario nuevo")
         nueva_pass = st.text_input("Contraseña nueva", type="password")
         submitted = st.form_submit_button("Registrar")
+
         if submitted:
-            st.write("Intentando registrar usuario...")
             if not (nombre and apellido and nuevo_usuario and nueva_pass):
                 st.warning("Todos los campos son obligatorios.")
             else:
-                hashed = bcrypt.hashpw(nueva_pass.encode(), bcrypt.gensalt()).decode()
-                try:
-                    conn.execute("INSERT INTO usuarios (nombre, apellido, usuario, contraseña, rol) VALUES (?, ?, ?, ?, 'usuario')",
-                                (nombre, apellido, nuevo_usuario, hashed))
-                    conn.commit()
-                    st.success("✅ Usuario Registrado")
-                except Exception as e:
-                    st.error(f"Error al registrar usuario: {e}")
-            # Mostrar usuarios actuales tras cada intento de registro
-            usuarios_df = pd.read_sql_query("SELECT id, nombre, apellido, usuario, rol FROM usuarios", conn)
-            st.write("Usuarios actuales en la base de datos:")
-            st.dataframe(usuarios_df)
-
-    conn.close()
-
-
-    
-
+                cursor = conn.execute("SELECT COUNT(*) FROM usuarios WHERE usuario = ?", (nuevo_usuario,))
+                existe = cursor.fetchone()[0]
+                if existe:
+                    st.error("❌ El nombre de usuario ya está registrado.")
+                else:
+                    hashed = bcrypt.hashpw(nueva_pass.encode(), bcrypt.gensalt()).decode()
+                    try:
+                        conn.execute("INSERT INTO usuarios (nombre, apellido, usuario, contraseña, rol) VALUES (?, ?, ?, ?, 'usuario')",
+                                    (nombre, apellido, nuevo_usuario, hashed))
+                        conn.commit()
+                        st.success(f"✅ Usuario '{nuevo_usuario}' registrado correctamente.")
+                        st.experimental_rerun()
+                    except Exception as e:
+                        st.error(f"⚠️ Error inesperado: {e}")
 
     if st.button("Cerrar sesión 🔒"):
         st.session_state.clear()
         st.success("👋 Has cerrado sesión exitosamente. ¡Gracias por usar la plataforma!")
         st.experimental_rerun()
+
+    conn.close()
+
+    st.subheader("👥 Usuarios Registrados")
+    usuarios_df = pd.read_sql_query("SELECT nombre, apellido, usuario, rol FROM usuarios", conn)
+    st.dataframe(usuarios_df)
