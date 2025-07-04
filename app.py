@@ -73,11 +73,49 @@ Haz clic en 'Iniciar Test' para comenzar.
     """, height=0)
 
     total_final = 0
+    # Contador global de cambios de pestaña
+    if 'tab_switch_count' not in st.session_state:
+        st.session_state['tab_switch_count'] = 0
+
+    # Script para contar cambios de pestaña y enviar a Streamlit
+    components.html("""
+    <script>
+    let count = 0;
+    document.addEventListener("visibilitychange", function() {
+        if (document.hidden) {
+            count += 1;
+            window.parent.postMessage({ type: 'tab_switch', value: count }, "*");
+        }
+    });
+    window.addEventListener("message", (event) => {
+        if (event.data && event.data.type === 'tab_switch') {
+            const streamlitEvent = new CustomEvent('streamlit:tab_switch', { detail: event.data.value });
+            window.dispatchEvent(streamlitEvent);
+        }
+    });
+    </script>
+    <script>
+    if (window.parent !== window) {
+        window.addEventListener('message', function(event) {
+            if (event.data && event.data.type === 'tab_switch') {
+                window.parent.postMessage(event.data, '*');
+            }
+        });
+    }
+    </script>
+    """, height=0)
+
+    # Recibir el conteo de cambios de pestaña desde JS
+    import streamlit as __st
+    def _update_tab_switch_count():
+        __st.session_state['tab_switch_count'] += 1
+    __st.experimental_on_event('streamlit:tab_switch', _update_tab_switch_count)
+
     for bloque in ["fuentes_datos", "ingesta", "procesamiento", "sql", "python"]:
         st.subheader(f"🧩 Bloque: {bloque.upper().replace('_', ' ')}")
         preguntas = obtener_preguntas_por_bloque(bloque)
         correctas = 0
-        cambios_tabs = st.number_input(f"Cambios de pestaña en bloque {bloque}", min_value=0, step=1, key=f"tabs_{bloque}")
+        # cambios_tabs ya no es visible ni editable por el usuario
         for i, row in preguntas.iterrows():
             respuesta = st.radio(row['pregunta'], eval(row['opciones']), key=f"{bloque}_{i}")
             if respuesta == row['respuesta_correcta']:
@@ -86,6 +124,8 @@ Haz clic en 'Iniciar Test' para comenzar.
         total_final += resultado * 0.20
         reintento = obtener_reintentos(usuario)
         if st.button(f"Guardar bloque {bloque}"):
+            # Guardar el valor actual del contador global de cambios de pestaña
+            cambios_tabs = st.session_state.get('tab_switch_count', 0)
             registrar_resultados(usuario, bloque, resultado, cambios_tabs, reintento)
             st.success(f"✅ Puntaje bloque {bloque}: {resultado}/100 (reintento #{reintento + 1})")
 

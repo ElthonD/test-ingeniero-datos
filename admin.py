@@ -29,6 +29,11 @@ def run():
             resumen = pd.concat([df_pivot, cambios], axis=1)
             resumen["Reintentos"] = reintentos
             resumen["Resultado Final"] = final.astype(int)
+
+            # Nueva columna: Total de cambios de pestaña en todo el test
+            total_cambios = resultados.groupby('usuario')['cambios_tabs'].sum()
+            resumen["Total Cambios de Pestaña"] = total_cambios
+
             st.dataframe(resumen)
         else:
             st.info("Aún no hay resultados.")
