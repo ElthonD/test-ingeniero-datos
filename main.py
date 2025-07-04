@@ -27,7 +27,7 @@ def login():
             if verify_password(password, stored_hash.encode()):
                 st.session_state["usuario"] = usuario
                 st.session_state["rol"] = rol
-                st.experimental_rerun()
+                st.rerun()
             else:
                 st.error("Contraseña incorrecta.")
         else:
