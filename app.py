@@ -60,6 +60,7 @@ Haz clic en 'Iniciar Test' para comenzar.
         st.warning("Tiempo agotado.")
         st.stop()
 
+    import streamlit.components.v1 as components
     components.html("""
     <script>
     let count = 0;
@@ -103,12 +104,18 @@ Haz clic en 'Iniciar Test' para comenzar.
     for bloque in ["fuentes_datos", "ingesta", "procesamiento", "sql", "python"]:
         st.subheader(f"🧩 Bloque: {bloque.upper().replace('_', ' ')}")
         preguntas = obtener_preguntas_por_bloque(bloque)
+        if preguntas.empty or len(preguntas) == 0:
+            st.info(f"No hay preguntas registradas para el bloque '{bloque}'.")
+            continue
         correctas = 0
         for i, row in preguntas.iterrows():
             respuesta = st.radio(row['pregunta'], eval(row['opciones']), key=f"{bloque}_{i}")
             if respuesta == row['respuesta_correcta']:
                 correctas += 1
-        resultado = int((correctas / len(preguntas)) * 100)
+        try:
+            resultado = int((correctas / len(preguntas)) * 100)
+        except ZeroDivisionError:
+            resultado = 0
         total_final += resultado * 0.20
         reintento = obtener_reintentos(usuario)
         if st.button(f"Guardar bloque {bloque}"):
