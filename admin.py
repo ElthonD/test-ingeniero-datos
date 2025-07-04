@@ -48,8 +48,8 @@ def run():
                                 (nombre, apellido, nuevo_usuario, hashed))
                     conn.commit()
                     st.success("✅ Usuario Registrado")
-                except:
-                    st.error("Error: el usuario ya existe.")
+                except Exception as e:
+                    st.error(f"Error al registrar usuario: {e}")
 
     conn.close()
 
