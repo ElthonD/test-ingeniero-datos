@@ -104,3 +104,7 @@ Debes acceder a la base de datos y actualizar el campo `contraseña` del usuario
 ---
 
 ¿Tienes más dudas o sugerencias? Crea un issue en tu repositorio o extiende esta guía.
+
+### 🧪 Usuario de prueba agregado
+- **Usuario:** `daniel.rivas`
+- **Contraseña:** `S3gura#D4nR!v@s2025`
