@@ -26,7 +26,7 @@ cursor.execute('DELETE FROM preguntas')
 # Insertar preguntas
 for _, row in df.iterrows():
     # Normalizar nombres de bloque para que coincidan con la app
-    bloque_original = str(row['bloque']).strip().lower()
+    bloque_original = str(row['Bloque']).strip().lower()
     bloque_map = {
         'fuentes de datos': 'fuentes_datos',
         'fuentes_datos': 'fuentes_datos',
@@ -38,20 +38,16 @@ for _, row in df.iterrows():
         'python': 'python'
     }
     bloque = bloque_map.get(bloque_original, bloque_original.replace(' ', '_'))
-    complejidad = str(row['complejidad'])
-    pregunta = str(row['pregunta'])
-    # Suponiendo que las opciones están en columnas separadas: opcion_a, opcion_b, opcion_c, opcion_d
-    opciones = str([
-        row.get('opcion_a', ''),
-        row.get('opcion_b', ''),
-        row.get('opcion_c', ''),
-        row.get('opcion_d', '')
-    ])
-    respuesta_correcta = str(row['respuesta_correcta'])
+    complejidad = str(row['Complejidad'])
+    pregunta = str(row['Pregunta'])
+    # Opciones separadas por ';' en una sola columna
+    opciones = [opt.strip() for opt in str(row['Opciones']).split(';') if opt.strip()]
+    opciones_str = str(opciones)
+    respuesta_correcta = str(row['Respuesta_Correcta'])
     cursor.execute('''
         INSERT INTO preguntas (bloque, complejidad, pregunta, opciones, respuesta_correcta)
         VALUES (?, ?, ?, ?, ?)
-    ''', (bloque, complejidad, pregunta, opciones, respuesta_correcta))
+    ''', (bloque, complejidad, pregunta, opciones_str, respuesta_correcta))
 
 conn.commit()
 conn.close()
