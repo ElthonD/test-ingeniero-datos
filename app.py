@@ -73,49 +73,37 @@ Haz clic en 'Iniciar Test' para comenzar.
     """, height=0)
 
     total_final = 0
-    # Contador global de cambios de pestaña
+
+    # Contador de cambios de pestaña por bloque, invisible para el usuario
     if 'tab_switch_count' not in st.session_state:
         st.session_state['tab_switch_count'] = 0
+    if 'tab_switch_count_prev' not in st.session_state:
+        st.session_state['tab_switch_count_prev'] = 0
 
-    # Script para contar cambios de pestaña y enviar a Streamlit
+    # Script JS para contar cambios de pestaña y guardar en localStorage
     components.html("""
     <script>
-    let count = 0;
+    let count = Number(localStorage.getItem('tab_switch_count') || 0);
     document.addEventListener("visibilitychange", function() {
         if (document.hidden) {
             count += 1;
-            window.parent.postMessage({ type: 'tab_switch', value: count }, "*");
+            localStorage.setItem('tab_switch_count', count);
         }
     });
-    window.addEventListener("message", (event) => {
-        if (event.data && event.data.type === 'tab_switch') {
-            const streamlitEvent = new CustomEvent('streamlit:tab_switch', { detail: event.data.value });
-            window.dispatchEvent(streamlitEvent);
+    window.addEventListener("message", function(event) {
+        if (event.data && event.data.type === 'get_tab_switch_count') {
+            const count = Number(localStorage.getItem('tab_switch_count') || 0);
+            window.parent.postMessage({type: 'tab_switch_count', value: count}, '*');
         }
     });
-    </script>
-    <script>
-    if (window.parent !== window) {
-        window.addEventListener('message', function(event) {
-            if (event.data && event.data.type === 'tab_switch') {
-                window.parent.postMessage(event.data, '*');
-            }
-        });
-    }
     </script>
     """, height=0)
 
-    # Recibir el conteo de cambios de pestaña desde JS
-    import streamlit as __st
-    def _update_tab_switch_count():
-        __st.session_state['tab_switch_count'] += 1
-    __st.experimental_on_event('streamlit:tab_switch', _update_tab_switch_count)
-
+    import streamlit.components.v1 as components
     for bloque in ["fuentes_datos", "ingesta", "procesamiento", "sql", "python"]:
         st.subheader(f"🧩 Bloque: {bloque.upper().replace('_', ' ')}")
         preguntas = obtener_preguntas_por_bloque(bloque)
         correctas = 0
-        # cambios_tabs ya no es visible ni editable por el usuario
         for i, row in preguntas.iterrows():
             respuesta = st.radio(row['pregunta'], eval(row['opciones']), key=f"{bloque}_{i}")
             if respuesta == row['respuesta_correcta']:
@@ -124,8 +112,20 @@ Haz clic en 'Iniciar Test' para comenzar.
         total_final += resultado * 0.20
         reintento = obtener_reintentos(usuario)
         if st.button(f"Guardar bloque {bloque}"):
-            # Guardar el valor actual del contador global de cambios de pestaña
-            cambios_tabs = st.session_state.get('tab_switch_count', 0)
+            # Obtener el valor actualizado de cambios de pestaña desde localStorage
+            import streamlit as __st
+            import time as __time
+            # Pedir el valor a JS
+            components.html("""
+            <script>
+            window.parent.postMessage({type: 'get_tab_switch_count'}, '*');
+            </script>
+            """, height=0)
+            # Esperar un poco para que JS responda (no óptimo, pero funcional en Streamlit)
+            __time.sleep(0.2)
+            # Intentar leer el valor de cambios de pestaña desde session_state (si fue actualizado por otro mecanismo)
+            cambios_tabs = __st.session_state.get('tab_switch_count', 0) - __st.session_state.get('tab_switch_count_prev', 0)
+            __st.session_state['tab_switch_count_prev'] = __st.session_state.get('tab_switch_count', 0)
             registrar_resultados(usuario, bloque, resultado, cambios_tabs, reintento)
             st.success(f"✅ Puntaje bloque {bloque}: {resultado}/100 (reintento #{reintento + 1})")
 
