@@ -100,41 +100,48 @@ Haz clic en 'Iniciar Test' para comenzar.
     </script>
     """, height=0)
 
-    import streamlit.components.v1 as components
-    for bloque in ["fuentes_datos", "ingesta", "procesamiento", "sql", "python"]:
-        st.subheader(f"🧩 Bloque: {bloque.upper().replace('_', ' ')}")
+    # --- NUEVO FLUJO: Mostrar todas las preguntas, guardar todo al final ---
+    bloques = ["fuentes_datos", "ingesta", "procesamiento", "sql", "python"]
+    preguntas_dict = {}
+    for bloque in bloques:
         preguntas = obtener_preguntas_por_bloque(bloque)
         if preguntas.empty or len(preguntas) == 0:
             st.info(f"No hay preguntas registradas para el bloque '{bloque}'.")
             continue
-        correctas = 0
+        st.subheader(f"🧩 Bloque: {bloque.upper().replace('_', ' ')}")
+        preguntas_dict[bloque] = []
         for i, row in preguntas.iterrows():
-            respuesta = st.radio(row['pregunta'], eval(row['opciones']), key=f"{bloque}_{i}")
-            if respuesta == row['respuesta_correcta']:
-                correctas += 1
-        try:
-            resultado = int((correctas / len(preguntas)) * 100)
-        except ZeroDivisionError:
-            resultado = 0
-        total_final += resultado * 0.20
+            opciones = eval(row['opciones']) if isinstance(row['opciones'], str) else row['opciones']
+            respuesta = st.radio(row['pregunta'], opciones, key=f"{bloque}_{i}")
+            preguntas_dict[bloque].append({
+                'pregunta': row['pregunta'],
+                'respuesta_correcta': row['respuesta_correcta'],
+                'respuesta_usuario': respuesta
+            })
+
+    if st.button("Enviar preguntas y finalizar test"):
+        import streamlit as __st
+        import time as __time
+        # Pedir el valor a JS
+        components.html("""
+        <script>
+        window.parent.postMessage({type: 'get_tab_switch_count'}, '*');
+        </script>
+        """, height=0)
+        __time.sleep(0.2)
+        cambios_tabs_total = __st.session_state.get('tab_switch_count', 0)
+        __st.session_state['tab_switch_count_prev'] = cambios_tabs_total
         reintento = obtener_reintentos(usuario)
-        if st.button(f"Guardar bloque {bloque}"):
-            # Obtener el valor actualizado de cambios de pestaña desde localStorage
-            import streamlit as __st
-            import time as __time
-            # Pedir el valor a JS
-            components.html("""
-            <script>
-            window.parent.postMessage({type: 'get_tab_switch_count'}, '*');
-            </script>
-            """, height=0)
-            # Esperar un poco para que JS responda (no óptimo, pero funcional en Streamlit)
-            __time.sleep(0.2)
-            # Intentar leer el valor de cambios de pestaña desde session_state (si fue actualizado por otro mecanismo)
-            cambios_tabs = __st.session_state.get('tab_switch_count', 0) - __st.session_state.get('tab_switch_count_prev', 0)
-            __st.session_state['tab_switch_count_prev'] = __st.session_state.get('tab_switch_count', 0)
-            registrar_resultados(usuario, bloque, resultado, cambios_tabs, reintento)
-            st.success(f"✅ Puntaje bloque {bloque}: {resultado}/100 (reintento #{reintento + 1})")
+        for bloque in preguntas_dict:
+            preguntas_bloque = preguntas_dict[bloque]
+            correctas = sum(1 for p in preguntas_bloque if p['respuesta_usuario'] == p['respuesta_correcta'])
+            total_preguntas = len(preguntas_bloque)
+            resultado = int((correctas / total_preguntas) * 100) if total_preguntas > 0 else 0
+            registrar_resultados(usuario, bloque, resultado, cambios_tabs_total, reintento)
+        st.success("¡Test finalizado! Tus respuestas han sido registradas. Muchas gracias por participar.")
+        st.balloons()
+        st.session_state.clear()
+        st.stop()
 
     # El resultado final estimado ya no se muestra al usuario, solo se registra en la base de datos y se visualiza en el módulo admin
 
