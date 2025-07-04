@@ -98,4 +98,4 @@ Haz clic en 'Iniciar Test' para comenzar.
     if st.button("Cerrar sesión 🔒"):
         st.session_state.clear()
         st.success("👋 Has cerrado sesión exitosamente. ¡Gracias por usar la plataforma!")
-        st.experimental_rerun()
+        st.rerun()
