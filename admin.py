@@ -63,7 +63,7 @@ def run():
                                     (nombre, apellido, nuevo_usuario, hashed))
                         conn.commit()
                         st.success(f"✅ Usuario '{nuevo_usuario}' registrado correctamente.")
-                        st.experimental_rerun()
+                        st.rerun()
                     except Exception as e:
                         st.error(f"⚠️ Error inesperado: {e}")
 
@@ -77,7 +77,7 @@ def run():
     if st.button("Cerrar sesión 🔒"):
         st.session_state.clear()
         st.success("👋 Has cerrado sesión exitosamente.")
-        st.experimental_rerun()
+        st.rerun()
 
 
     st.subheader("🔁 Reiniciar Test de Usuario")

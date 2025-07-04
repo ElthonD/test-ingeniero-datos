@@ -49,7 +49,7 @@ Haz clic en 'Iniciar Test' para comenzar.
         if st.button("🚀 Iniciar Test"):
             st.session_state['test_iniciado'] = True
             st.session_state['start_time'] = time.time()
-            st.experimental_rerun()
+            st.rerun()
         st.stop()
 
     tiempo_transcurrido = time.time() - st.session_state['start_time']
