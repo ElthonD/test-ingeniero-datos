@@ -14,15 +14,6 @@ La aplicación está dividida en dos módulos:
 
 ---
 
-## 👥 Usuarios de Prueba
-
-| Nombre            | Usuario        | Contraseña             | Rol     |
-|-------------------|----------------|-------------------------|---------|
-| Ricardo Polo      | ricardo.polo   | R1c4rd0#2025!           | usuario |
-| Osvaldo Esparza   | osvaldo.esparza| 0sp4rzA#2025!           | usuario |
-| Daniel Rivas      | daniel.rivas   | S3gura#D4nR!v@s2025     | usuario |
-| Administrador     | admin          | Adm1n#2025!             | admin   |
-
 ---
 
 ## 🗂 Estructura del Proyecto
